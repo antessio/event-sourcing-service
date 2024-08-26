@@ -11,20 +11,20 @@ import antessio.eventsourcing.inmemory.wallet.Wallet;
 
 class InMemoryEventStore implements EventStore<Wallet, UUID> {
 
-    private final List<Event<Wallet>> aggregateEvents = new ArrayList<>();
+    private final List<Event<Wallet, UUID>> aggregateEvents = new ArrayList<>();
 
     @Override
-    public void put(List<Event<Wallet>> events) {
+    public void put(List<Event<Wallet, UUID>> events) {
         aggregateEvents.addAll(events);
     }
 
     @Override
-    public List<Event<Wallet>> getAllEvents() {
+    public List<Event<Wallet, UUID>> getAllEvents() {
         return List.copyOf(aggregateEvents);
     }
 
     @Override
-    public List<Event<Wallet>> getAggregateEvents(Class<? extends Wallet> aggregateClass) {
+    public List<Event<Wallet, UUID>> getAggregateEvents(Class<? extends Wallet> aggregateClass) {
         return aggregateEvents
                 .stream()
                 .filter(e -> e.getAggregateClass().equals(aggregateClass))
