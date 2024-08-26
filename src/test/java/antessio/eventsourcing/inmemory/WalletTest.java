@@ -8,10 +8,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import antessio.eventsourcing.AggregateStore;
 import antessio.eventsourcing.EventSourcingService;
-import antessio.eventsourcing.EventStore;
-import antessio.eventsourcing.ProjectorStore;
 import antessio.eventsourcing.inmemory.wallet.Wallet;
 import antessio.eventsourcing.inmemory.wallet.commands.CreateWalletCommand;
 import antessio.eventsourcing.inmemory.wallet.commands.TopUpWalletCommand;
@@ -19,11 +16,18 @@ import antessio.eventsourcing.inmemory.wallet.projector.WalletProjections;
 
 class WalletTest {
 
-    private WalletInMemoryEventSourcingService eventStore;
+    private InMemoryProjectorStore inMemoryProjectorStore;
+    private InMemoryAggregateStore inMemoryAggregateStore;
+    private InMemoryEventStore inMemoryEventStore;
+
+    private EventSourcingService<Wallet, UUID> eventStore;
 
     @BeforeEach
     void setUp() {
-        eventStore = new WalletInMemoryEventSourcingService();
+        inMemoryProjectorStore = new InMemoryProjectorStore();
+        inMemoryAggregateStore = new InMemoryAggregateStore();
+        inMemoryEventStore = new InMemoryEventStore();
+        eventStore = new EventSourcingService<>(inMemoryProjectorStore, inMemoryAggregateStore, inMemoryEventStore);
         WalletProjections.registerProjections(eventStore);
     }
 
@@ -51,30 +55,6 @@ class WalletTest {
                 .matches(w -> w.amount().intValue() == 3010);
 
         ;
-    }
-
-    private static class WalletInMemoryEventSourcingService implements EventSourcingService<Wallet, UUID> {
-
-
-        private InMemoryProjectorStore inMemoryProjectorStore = new InMemoryProjectorStore();
-        private InMemoryAggregateStore inMemoryAggregateStore = new InMemoryAggregateStore();
-        private InMemoryEventStore inMemoryEventStore = new InMemoryEventStore();
-
-        @Override
-        public ProjectorStore<Wallet, UUID> getProjectorStore() {
-            return inMemoryProjectorStore;
-        }
-
-        @Override
-        public AggregateStore<Wallet, UUID> getAggregateStore() {
-            return inMemoryAggregateStore;
-        }
-
-        @Override
-        public EventStore<Wallet, UUID> getEventStore() {
-            return inMemoryEventStore;
-        }
-
     }
 
 }
