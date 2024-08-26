@@ -22,7 +22,7 @@ public interface Command<A extends Aggregate<ID>, ID> {
      * The events eventually are projected to the {@link Aggregate}
      * @return
      */
-    List<Event<A>> process();
+    List<Event<A, ID>> process();
 
     /**
      * A command must be applied to only one specific {@link Aggregate}

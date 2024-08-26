@@ -1,6 +1,7 @@
 package antessio.eventsourcing.inmemory.wallet.commands;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,9 +20,9 @@ public record TopUpWalletCommand(UUID walletId, BigDecimal amount) implements Co
     }
 
     @Override
-    public List<Event<Wallet>> process() {
+    public List<Event<Wallet, UUID>> process() {
         return List.of(
-                new WalletTopUpExecuted(this.walletId, this.amount)
+                new WalletTopUpExecuted(UUID.randomUUID(), this.walletId, this.amount, Instant.now())
         );
     }
 

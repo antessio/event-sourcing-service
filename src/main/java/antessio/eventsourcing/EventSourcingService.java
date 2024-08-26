@@ -2,7 +2,6 @@ package antessio.eventsourcing;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * This allows the source to publish a {@link Command} that triggers an {@link Event} that eventually
@@ -10,43 +9,34 @@ import java.util.function.Function;
  * @param <A>
  * @param <ID>
  */
-public interface EventSourcingService<A extends Aggregate<ID>, ID> {
+public class EventSourcingService<A extends Aggregate<ID>, ID> {
 
-    /**
-     * Where the {@link Projector}s are stored.
-     * @return
-     */
-    ProjectorStore<A, ID> getProjectorStore();
+    private final ReadStoreService<A, ID> readStoreService;
+    private final ProjectorStore<A, ID> projectorStore;
+    private final AggregateStore<A, ID> aggregateStore;
 
-    /**
-     * Where the {@link Aggregate}s are stored.
-     * @return
-     */
-    AggregateStore<A, ID> getAggregateStore();
 
-    /**
-     * Where the {@link Event}s are stored.
-     * @return
-     */
-    EventStore<A, ID> getEventStore();
+    public EventSourcingService(ProjectorStore<A, ID> projectorStore, AggregateStore<A, ID> aggregateStore, EventStore<A, ID> eventStore) {
+        this.readStoreService = new ReadStoreService<>(projectorStore, aggregateStore, eventStore);
+        this.projectorStore = projectorStore;
+        this.aggregateStore = aggregateStore;
+    }
 
     /**
      * Send a {@link Command} and returns the updated {@link Aggregate}
      * @param command
      * @return
      */
-    default A publish(Command<A, ID> command) {
-        Optional<A> maybeAggregate = command.getAggregateId()
-                                            .flatMap(aggregateId -> getAggregateStore().get(aggregateId));
-        List<Event<A>> eventsToApply = command.process();
-        Function<A, A> result = eventsToApply.stream()
-                                             .map(this::applyEvent)
-                                             .reduce(Function::compose)
-                                             .orElseGet(Function::identity);
-        A updatedAggregate = result.apply(maybeAggregate.orElse(null));
-        getEventStore().put(eventsToApply);
-        getAggregateStore().put(updatedAggregate);
-        return updatedAggregate;
+    public A publish(Command<A, ID> command, ReadStoreService<A, ID> readStoreService) {
+        List<Event<A, ID>> eventsToApply = command.process();
+        // expected one command to update one aggregate
+        return readStoreService
+                .processEvents(eventsToApply)
+                .getFirst();
+    }
+
+    public A publish(Command<A, ID> command) {
+        return publish(command, getReadStoreService());
     }
 
 
@@ -55,8 +45,8 @@ public interface EventSourcingService<A extends Aggregate<ID>, ID> {
      * @param projector
      * @param <E>
      */
-    default <E extends Event<A>> void registerProjector(Projector<A, E> projector) {
-        getProjectorStore().addProjector((Projector<A, Event<A>>) projector);
+    public  <E extends Event<A, ID>> void registerProjector(Projector<A, E, ID> projector) {
+        getProjectorStore().addProjector((Projector<A, Event<A, ID>, ID>) projector);
     }
 
     /**
@@ -64,15 +54,21 @@ public interface EventSourcingService<A extends Aggregate<ID>, ID> {
      * @param id
      * @return
      */
-    default Optional<A> getAggregate(ID id) {
+    public Optional<A> getAggregate(ID id) {
         return getAggregateStore().get(id);
     }
 
-    private Function<A, A> applyEvent(Event<A> event) {
-        return (a) -> {
-            Projector<A, Event<A>> matchingProjector = getProjectorStore().getMatchingProjector((Class<? extends Event<A>>) event.getClass());
-            return matchingProjector.handle(a, event);
-        };
+
+    public ReadStoreService<A, ID> getReadStoreService() {
+        return readStoreService;
+    }
+
+    public ProjectorStore<A, ID> getProjectorStore() {
+        return projectorStore;
+    }
+
+    public AggregateStore<A, ID> getAggregateStore() {
+        return aggregateStore;
     }
 
 }
