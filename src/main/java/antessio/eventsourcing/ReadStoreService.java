@@ -7,17 +7,25 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- *
+ * This component is used by both source and listeners. The event source use it to update an {@link Aggregate} from a {@link Command} while a listener use it to
+ * update one or more {@link Aggregate}s from the events.
  */
 public class ReadStoreService<A extends Aggregate<ID>, ID> {
 
 
     private final ProjectorStore<A, ID> projectorStore;
-    
+
     private final AggregateStore<A, ID> aggregateStore;
 
     private final EventStore<A, ID> eventStore;
 
+
+    /**
+     *
+     * @param projectorStore Where the {@link Projector}s are stored.
+     * @param aggregateStore Where the {@link Aggregate}s are stored.
+     * @param eventStore     Where the {@link Event}s are stored.
+     */
     public ReadStoreService(ProjectorStore<A, ID> projectorStore, AggregateStore<A, ID> aggregateStore, EventStore<A, ID> eventStore) {
         this.projectorStore = projectorStore;
         this.aggregateStore = aggregateStore;
@@ -45,7 +53,12 @@ public class ReadStoreService<A extends Aggregate<ID>, ID> {
     public Optional<A> getAggregate(ID id) {
         return getAggregateStore().get(id);
     }
-
+    public List<A> processEvents() {
+        List<Event<A, ID>> unprocessedEvents = eventStore.getUnprocessedEvents();
+        List<A> updatedAggregates = processEvents(unprocessedEvents);
+        eventStore.markAsProcessed(unprocessedEvents);
+        return updatedAggregates;
+    }
     public List<A> processEvents(List<Event<A, ID>> events) {
         // group events by aggregate
         return events.stream()
