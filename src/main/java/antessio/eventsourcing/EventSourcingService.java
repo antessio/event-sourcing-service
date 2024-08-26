@@ -14,12 +14,19 @@ public class EventSourcingService<A extends Aggregate<ID>, ID> {
     private final ReadStoreService<A, ID> readStoreService;
     private final ProjectorStore<A, ID> projectorStore;
     private final AggregateStore<A, ID> aggregateStore;
+    private final EventStore<A, ID> eventStore;
 
-
+    /**
+     *
+     * @param projectorStore Where the {@link Projector}s are stored.
+     * @param aggregateStore Where the {@link Aggregate}s are stored.
+     * @param eventStore Where the {@link Event}s are stored.
+     */
     public EventSourcingService(ProjectorStore<A, ID> projectorStore, AggregateStore<A, ID> aggregateStore, EventStore<A, ID> eventStore) {
         this.readStoreService = new ReadStoreService<>(projectorStore, aggregateStore, eventStore);
         this.projectorStore = projectorStore;
         this.aggregateStore = aggregateStore;
+        this.eventStore = eventStore;
     }
 
     /**
@@ -29,6 +36,8 @@ public class EventSourcingService<A extends Aggregate<ID>, ID> {
      */
     public A publish(Command<A, ID> command, ReadStoreService<A, ID> readStoreService) {
         List<Event<A, ID>> eventsToApply = command.process();
+
+        eventStore.put(eventsToApply);
         // expected one command to update one aggregate
         return readStoreService
                 .processEvents(eventsToApply)

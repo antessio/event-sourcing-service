@@ -47,15 +47,23 @@ public class BiTest {
                 new WalletCreatedEvent(UUID.randomUUID(), newWalletId, newWalletOwnerId, new BigDecimal(300), now.minus(10, ChronoUnit.MINUTES)),
                 new WalletTopUpExecuted(UUID.randomUUID(), wallet.getId(), new BigDecimal(10),now.minus(9, ChronoUnit.MINUTES)),
                 new WalletTopUpExecuted(UUID.randomUUID(), newWalletId, new BigDecimal(310), now.minus(8, ChronoUnit.MINUTES)));
+        List<Event<Wallet, UUID>> processedEvents = List.of(new WalletCreatedEvent(
+                UUID.randomUUID(),
+                wallet.getId(),
+                wallet.ownerId(),
+                wallet.amount(),
+                now.minus(15, ChronoUnit.MINUTES)));
         readStore.getAggregateStore().put(wallet);
         readStore.getEventStore().put(
-                List.of(new WalletCreatedEvent(UUID.randomUUID(), wallet.getId(), wallet.ownerId(), wallet.amount(), now.minus(15, ChronoUnit.MINUTES)))
+                processedEvents
         );
+        readStore.getEventStore().markAsProcessed(processedEvents);
+        readStore.getEventStore().put(unprocessedEvents);
 
-        readStore.processEvents(unprocessedEvents);
+        readStore.processEvents();
         assertThat(readStore.getAggregate(wallet.getId()))
                 .get()
-                .matches(w -> w.amount().intValue() == 20   , "amount should be 310");
+                .matches(w -> w.amount().intValue() == 20   , "amount should be 20");
         assertThat(readStore.getAggregate(newWalletId))
                 .get()
                 .matches(w -> w.ownerId().equals(newWalletOwnerId))
