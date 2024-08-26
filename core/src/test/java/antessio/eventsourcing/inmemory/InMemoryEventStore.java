@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import antessio.eventsourcing.Event;
-import antessio.eventsourcing.EventStore;
 import antessio.eventsourcing.inmemory.wallet.Wallet;
+import eventsourcing.Event;
+import eventsourcing.EventStore;
 
 
 class InMemoryEventStore implements EventStore<Wallet, UUID> {

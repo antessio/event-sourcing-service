@@ -10,6 +10,8 @@
 
     <modules>
         <module>core</module>
-        <module>aggregate-store-api</module>
+        <module>aggregate-api</module>
+        <module>projector-api</module>
+        <module>event-api</module>
     </modules>
 </project>

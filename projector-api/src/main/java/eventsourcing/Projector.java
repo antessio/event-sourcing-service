@@ -1,4 +1,6 @@
-package antessio.eventsourcing;
+package eventsourcing;
+
+import eventsourcing.aggregate.Aggregate;
 
 /**
  * Given an existing {@link Aggregate} and an {@link Event}, applies the event to the aggregate

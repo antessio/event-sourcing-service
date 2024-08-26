@@ -7,9 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import antessio.eventsourcing.Command;
-import antessio.eventsourcing.Event;
 import antessio.eventsourcing.inmemory.wallet.Wallet;
 import antessio.eventsourcing.inmemory.wallet.events.WalletTopUpExecuted;
+import eventsourcing.Event;
 
 
 public record TopUpWalletCommand(UUID walletId, BigDecimal amount) implements Command<Wallet, UUID> {

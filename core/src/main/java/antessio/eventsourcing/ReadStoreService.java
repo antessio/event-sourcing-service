@@ -6,6 +6,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import eventsourcing.Event;
+import eventsourcing.EventStore;
+import eventsourcing.Projector;
+import eventsourcing.ProjectorStore;
+import eventsourcing.aggregate.Aggregate;
+import eventsourcing.aggregate.AggregateStore;
+
 /**
  * This component is used by both source and listeners. The event source use it to update an {@link Aggregate} from a {@link Command} while a listener use it to
  * update one or more {@link Aggregate}s from the events.

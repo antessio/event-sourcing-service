@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>antessio.event-sourcing</groupId>
-    <artifactId>aggregate-store-api</artifactId>
+    <artifactId>aggregate-api</artifactId>
 
     <properties>
         <maven.compiler.source>22</maven.compiler.source>

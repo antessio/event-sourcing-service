@@ -1,4 +1,4 @@
-package antessio.eventsourcing;
+package eventsourcing;
 
 import eventsourcing.aggregate.Aggregate;
 

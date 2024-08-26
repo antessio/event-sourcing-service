@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import antessio.eventsourcing.Event;
-import antessio.eventsourcing.Projector;
-import antessio.eventsourcing.ProjectorStore;
 import antessio.eventsourcing.inmemory.wallet.Wallet;
+import eventsourcing.Event;
+import eventsourcing.Projector;
+import eventsourcing.ProjectorStore;
 
 
 class InMemoryProjectorStore implements ProjectorStore<Wallet, UUID> {

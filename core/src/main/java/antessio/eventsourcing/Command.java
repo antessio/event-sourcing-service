@@ -3,6 +3,9 @@ package antessio.eventsourcing;
 import java.util.List;
 import java.util.Optional;
 
+import eventsourcing.Event;
+import eventsourcing.aggregate.Aggregate;
+
 /**
  * It represents a command that change the {@link Aggregate} state
  * @param <A>

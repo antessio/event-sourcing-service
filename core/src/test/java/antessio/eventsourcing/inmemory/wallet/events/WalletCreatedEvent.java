@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-import antessio.eventsourcing.Event;
 import antessio.eventsourcing.inmemory.wallet.Wallet;
+import eventsourcing.Event;
 
 
 public record WalletCreatedEvent(UUID eventId, UUID id, UUID ownerId, BigDecimal amount, Instant occurredAt) implements Event<Wallet, UUID> {

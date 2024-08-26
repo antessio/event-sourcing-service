@@ -1,4 +1,4 @@
-package antessio.eventsourcing;
+package eventsourcing;
 
 import java.util.List;
 

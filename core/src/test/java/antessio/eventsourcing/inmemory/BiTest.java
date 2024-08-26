@@ -11,15 +11,16 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import antessio.eventsourcing.AggregateStore;
-import antessio.eventsourcing.Event;
-import antessio.eventsourcing.EventStore;
-import antessio.eventsourcing.ProjectorStore;
+
 import antessio.eventsourcing.ReadStoreService;
 import antessio.eventsourcing.inmemory.wallet.Wallet;
 import antessio.eventsourcing.inmemory.wallet.events.WalletCreatedEvent;
 import antessio.eventsourcing.inmemory.wallet.events.WalletTopUpExecuted;
 import antessio.eventsourcing.inmemory.wallet.projector.WalletProjections;
+import eventsourcing.Event;
+import eventsourcing.EventStore;
+import eventsourcing.ProjectorStore;
+import eventsourcing.aggregate.AggregateStore;
 
 public class BiTest {
     private ProjectorStore<Wallet, UUID> projectorStore;

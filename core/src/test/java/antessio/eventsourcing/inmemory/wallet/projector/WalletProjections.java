@@ -5,11 +5,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import antessio.eventsourcing.EventSourcingService;
-import antessio.eventsourcing.Projector;
 import antessio.eventsourcing.ReadStoreService;
 import antessio.eventsourcing.inmemory.wallet.Wallet;
 import antessio.eventsourcing.inmemory.wallet.events.WalletCreatedEvent;
 import antessio.eventsourcing.inmemory.wallet.events.WalletTopUpExecuted;
+import eventsourcing.Projector;
 
 
 public final class WalletProjections {
