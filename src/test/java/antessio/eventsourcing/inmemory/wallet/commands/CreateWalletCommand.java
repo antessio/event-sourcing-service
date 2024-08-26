@@ -1,6 +1,7 @@
 package antessio.eventsourcing.inmemory.wallet.commands;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,11 +20,13 @@ public record CreateWalletCommand(UUID ownerId) implements Command<Wallet, UUID>
     }
 
     @Override
-    public List<Event<Wallet>> process() {
+    public List<Event<Wallet, UUID>> process() {
         return List.of(new WalletCreatedEvent(
                 UUID.randomUUID(),
+                UUID.randomUUID(),
                 this.ownerId,
-                BigDecimal.ZERO
+                BigDecimal.ZERO,
+                Instant.now()
         ));
     }
 

@@ -12,15 +12,15 @@ import antessio.eventsourcing.inmemory.wallet.Wallet;
 
 class InMemoryProjectorStore implements ProjectorStore<Wallet, UUID> {
 
-    private final Map<Class<? extends Event<Wallet>>, Projector<Wallet, Event<Wallet>>> projectorsMap = new HashMap<>();
+    private final Map<Class<? extends Event<Wallet, UUID>>, Projector<Wallet, Event<Wallet, UUID>, UUID>> projectorsMap = new HashMap<>();
 
     @Override
-    public boolean hasProjector(Class<? extends Event<Wallet>> eventType) {
+    public boolean hasProjector(Class<? extends Event<Wallet, UUID>> eventType) {
         return projectorsMap.containsKey(eventType);
     }
 
     @Override
-    public void addProjector(Projector<Wallet, Event<Wallet>> projector) {
+    public void addProjector(Projector<Wallet, Event<Wallet, UUID> ,UUID> projector) {
         if (projectorsMap.containsKey(projector.getSubscribedEvent())) {
             throw new IllegalArgumentException("this event has already a projector");
         }
@@ -28,7 +28,7 @@ class InMemoryProjectorStore implements ProjectorStore<Wallet, UUID> {
     }
 
     @Override
-    public Projector<Wallet, Event<Wallet>> getMatchingProjector(Class<? extends Event<Wallet>> eventType) {
+    public Projector<Wallet, Event<Wallet, UUID>, UUID> getMatchingProjector(Class<? extends Event<Wallet, UUID>> eventType) {
         return projectorsMap.get(eventType);
     }
 
