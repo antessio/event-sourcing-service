@@ -1,5 +1,7 @@
 package antessio.eventsourcing;
 
+import eventsourcing.aggregate.Aggregate;
+
 public interface ProjectorStore<A extends Aggregate<ID>, ID> {
 
     boolean hasProjector(Class<? extends Event<A, ID>> eventType);

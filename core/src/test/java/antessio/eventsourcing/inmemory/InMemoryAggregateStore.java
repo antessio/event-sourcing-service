@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import antessio.eventsourcing.AggregateStore;
 import antessio.eventsourcing.inmemory.wallet.Wallet;
+import eventsourcing.aggregate.AggregateStore;
 
 
 class InMemoryAggregateStore implements AggregateStore<Wallet, UUID> {

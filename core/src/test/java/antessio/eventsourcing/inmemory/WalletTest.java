@@ -13,6 +13,7 @@ import antessio.eventsourcing.inmemory.wallet.Wallet;
 import antessio.eventsourcing.inmemory.wallet.commands.CreateWalletCommand;
 import antessio.eventsourcing.inmemory.wallet.commands.TopUpWalletCommand;
 import antessio.eventsourcing.inmemory.wallet.projector.WalletProjections;
+import eventsourcing.aggregate.AggregateStore;
 
 class WalletTest {
 

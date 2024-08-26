@@ -1,6 +1,7 @@
-package antessio.eventsourcing;
+package eventsourcing.aggregate;
 
 import java.util.Optional;
+
 
 public interface AggregateStore<A extends Aggregate<ID>, ID> {
 
