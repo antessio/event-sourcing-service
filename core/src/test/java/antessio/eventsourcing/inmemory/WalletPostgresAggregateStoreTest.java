@@ -52,7 +52,7 @@ class WalletPostgresAggregateStoreTest {
     @BeforeEach
     void setUp() {
         DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(
-                "jdbc:postgresql://localhost:5432/antessio_event_sourcing",
+                SystemUtils.getPostgresUrl(),
                 "event_sourcing_user",
                 "event_sourcing_password");
         databaseInitializer = new DatabaseInitializer(databaseConfiguration);
