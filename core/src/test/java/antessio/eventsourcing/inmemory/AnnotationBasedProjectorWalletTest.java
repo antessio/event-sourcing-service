@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,15 +19,19 @@ import testutils.wallet.projector.WalletProjections;
 
 class AnnotationBasedProjectorWalletTest {
 
-    private AnnotationBasedProjectorStore<Wallet> walletAnnotationBasedProjectorStore;
+    private static AnnotationBasedProjectorStore<Wallet> walletAnnotationBasedProjectorStore;
     private InMemoryAggregateStore inMemoryAggregateStore;
     private InMemoryEventStore inMemoryEventStore;
 
     private EventSourcingService<Wallet> eventStore;
 
+    @BeforeAll
+    static void beforeAll() {
+        walletAnnotationBasedProjectorStore = new AnnotationBasedProjectorStore<>(List.of("testutils.wallet.projector"));
+    }
+
     @BeforeEach
     void setUp() {
-        walletAnnotationBasedProjectorStore = new AnnotationBasedProjectorStore<>(List.of("testutils.wallet.projector"));
         inMemoryAggregateStore = new InMemoryAggregateStore();
         inMemoryEventStore = new InMemoryEventStore();
         eventStore = new EventSourcingService<>(walletAnnotationBasedProjectorStore, inMemoryAggregateStore, inMemoryEventStore);

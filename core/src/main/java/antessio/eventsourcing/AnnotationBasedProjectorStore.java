@@ -11,8 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.reflections.Reflections;
 
 import eventsourcing.Event;
 import eventsourcing.Projection;
@@ -21,8 +24,9 @@ import eventsourcing.ProjectorStore;
 import eventsourcing.aggregate.Aggregate;
 
 /**
- * Projection store implementation based on {@link Projection} annotation.
- * It scans the packages provided in its constructor, instantiate the {@link Projector}s and keeps them in memory.
+ * Projection store implementation based on {@link Projection} annotation. It scans the packages provided in its constructor, instantiate the {@link Projector}s
+ * and keeps them in memory.
+ *
  * @param <A>
  */
 public class AnnotationBasedProjectorStore<A extends Aggregate> implements ProjectorStore<A> {
@@ -31,7 +35,6 @@ public class AnnotationBasedProjectorStore<A extends Aggregate> implements Proje
     private final Map<Class<? extends Event<A>>, Projector<A, Event<A>>> projectorsMap;
 
     /**
-     *
      * @param projectorPackageList Packages to scan.
      */
     public AnnotationBasedProjectorStore(List<String> projectorPackageList) {
@@ -44,6 +47,7 @@ public class AnnotationBasedProjectorStore<A extends Aggregate> implements Proje
                 .map(Optional::get)
                 .map(projectorConstructor -> trapError(projectorConstructor::newInstance))
                 .forEach(this::addProjector);
+
     }
 
 
@@ -65,50 +69,14 @@ public class AnnotationBasedProjectorStore<A extends Aggregate> implements Proje
         return projectorsMap.get(eventType);
     }
 
-    private List<Class<?>> findProjectionClasses(String packageName) {
-        List<Class<?>> annotatedClasses = new ArrayList<>();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = trapError(() -> classLoader.getResources(path));
+    private Set<Class<?>> findProjectionClasses(String packageName) {
+        Reflections reflections = new Reflections(packageName);
 
-        List<File> directories = new ArrayList<>();
+        return reflections.getTypesAnnotatedWith(Projection.class);
 
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            directories.add(new File(resource.getFile()));
-        }
-
-        for (File directory : directories) {
-            annotatedClasses.addAll(findProjectorClasses(directory, packageName));
-        }
-
-        return annotatedClasses;
     }
 
-    private List<Class<?>> findProjectorClasses(File directory, String packageName) {
-        List<Class<?>> classes = new ArrayList<>();
-        if (!directory.exists()) {
-            return classes;
-        }
-
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    assert !file.getName().contains(".");
-                    classes.addAll(findProjectorClasses(file, packageName + "." + file.getName()));
-                } else if (file.getName().endsWith(".class")) {
-                    String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-                    Class<?> clazz = trapError(() -> Class.forName(className));
-
-                    if (clazz.isAnnotationPresent(Projection.class)) {
-                        classes.add(clazz);
-                    }
-                }
-            }
-        }
-        return classes;
-    }
+    
 
     private Optional<Constructor<Projector<A, Event<A>>>> getProjectorConstructor(Class<?> clazz) {
 
