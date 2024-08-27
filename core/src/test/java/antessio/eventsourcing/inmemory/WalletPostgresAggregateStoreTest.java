@@ -3,14 +3,18 @@ package antessio.eventsourcing.inmemory;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import antessio.eventsourcing.EventSourcingService;
 
+import antessio.eventsourcing.containers.PostgresContainer;
 import eventsourcing.aggregate.AggregateStore;
 import eventsourcing.aggregate.DatabaseConfiguration;
 import eventsourcing.aggregate.DatabaseInitializer;
@@ -20,6 +24,7 @@ import testutils.wallet.Wallet;
 import testutils.wallet.commands.CreateWalletCommand;
 import testutils.wallet.commands.TopUpWalletCommand;
 import testutils.wallet.projector.WalletProjections;
+import utils.SystemUtils;
 
 class WalletPostgresAggregateStoreTest {
 
@@ -29,6 +34,20 @@ class WalletPostgresAggregateStoreTest {
 
     private EventSourcingService<Wallet> eventStore;
     private DatabaseInitializer databaseInitializer;
+
+    @BeforeAll
+    static void beforeAll() {
+        if (SystemUtils.isTestContainerEnabled()){
+            PostgresContainer.start();
+        }
+    }
+
+    @AfterAll
+    static void afterAll() {
+        if (SystemUtils.isTestContainerEnabled()){
+            PostgresContainer.stop();
+        }
+    }
 
     @BeforeEach
     void setUp() {

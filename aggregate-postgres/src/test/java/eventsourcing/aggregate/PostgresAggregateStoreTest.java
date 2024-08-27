@@ -8,19 +8,37 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import antessio.eventsourcing.containers.PostgresContainer;
 import eventsourcing.aggregate.wallet.Wallet;
 import jsonconversion.JacksonJsonConverter;
+import utils.SystemUtils;
 
 
 class PostgresAggregateStoreTest {
 
     private DatabaseConfiguration databaseConfiguration;
     private DatabaseInitializer databaseInitializer;
+    @BeforeAll
+    static void beforeAll() {
+        if (SystemUtils.isTestContainerEnabled()){
+            PostgresContainer.start();
+        }
+    }
 
+
+
+    @AfterAll
+    static void afterAll() {
+        if (SystemUtils.isTestContainerEnabled()){
+            PostgresContainer.stop();
+        }
+    }
 
     @BeforeEach
     void setUp() {
