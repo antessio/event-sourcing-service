@@ -28,6 +28,6 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Test
-      run: mvn clean test
+      run: mvn clean verify
       env:
         testContainerEnabled: true
