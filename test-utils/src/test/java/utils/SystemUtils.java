@@ -8,7 +8,9 @@ public final class SystemUtils {
     }
 
     public static boolean isTestContainerEnabled() {
-        return Optional.ofNullable(System.getenv("testContainerEnabled")).map(Boolean::valueOf).orElse(false);
+        String testContainerEnabled = System.getenv("testContainerEnabled");
+        System.out.println("testContainerEnabled = " + testContainerEnabled);
+        return Optional.ofNullable(testContainerEnabled).map(Boolean::valueOf).orElse(false);
     }
 
 }

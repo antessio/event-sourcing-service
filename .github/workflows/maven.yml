@@ -30,4 +30,4 @@ jobs:
     - name: Test
       run: mvn clean verify
       env:
-        testContainerEnabled: true
+        testContainerEnabled: 'true'
