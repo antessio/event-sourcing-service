@@ -21,5 +21,13 @@ public final class SystemUtils {
             return "jdbc:postgresql://localhost:5432/antessio_event_sourcing";
         }
     }
+    public static String getPostgresUser(){
+        if (isTestContainerEnabled()){
+            return PostgresContainer.getUrl();
+        }else{
+            return "jdbc:postgresql://localhost:5432/antessio_event_sourcing";
+        }
+    }
+
 
 }

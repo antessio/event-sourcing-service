@@ -4,7 +4,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 public class PostgresContainer {
 
-    private static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>( "postgres:16-alpine");
+    private static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>( "postgres:16-alpine")
+            .withUsername("event_sourcing_user")
+            .withPassword("event_sourcing_password")
+            .withDatabaseName("antessio_event_sourcing");
 
     public static void start(){
         postgreSQLContainer.start();
