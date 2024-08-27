@@ -2,7 +2,6 @@ package antessio.eventsourcing.inmemory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import eventsourcing.Event;
 import eventsourcing.Projector;

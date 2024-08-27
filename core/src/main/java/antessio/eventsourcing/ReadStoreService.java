@@ -14,8 +14,8 @@ import eventsourcing.aggregate.Aggregate;
 import eventsourcing.aggregate.AggregateStore;
 
 /**
- * This component is used by both source and listeners. The event source use it to update an {@link Aggregate} from a {@link eventsourcing.Command} while a listener use it to
- * update one or more {@link Aggregate}s from the events.
+ * This component is used by both source and listeners. The event source use it to update an {@link Aggregate} from a {@link eventsourcing.Command} while a
+ * listener use it to update one or more {@link Aggregate}s from the events.
  */
 public class ReadStoreService<A extends Aggregate> {
 
@@ -28,7 +28,6 @@ public class ReadStoreService<A extends Aggregate> {
 
 
     /**
-     *
      * @param projectorStore Where the {@link Projector}s are stored.
      * @param aggregateStore Where the {@link Aggregate}s are stored.
      * @param eventStore     Where the {@link Event}s are stored.
@@ -60,12 +59,14 @@ public class ReadStoreService<A extends Aggregate> {
     public Optional<A> getAggregate(String id, Class<A> cls) {
         return getAggregateStore().get(id, cls);
     }
+
     public List<A> processEvents() {
         List<Event<A>> unprocessedEvents = eventStore.getUnprocessedEvents();
         List<A> updatedAggregates = processEvents(unprocessedEvents);
         eventStore.markAsProcessed(unprocessedEvents);
         return updatedAggregates;
     }
+
     public List<A> processEvents(List<Event<A>> events) {
         // group events by aggregate
         return events.stream()
@@ -90,16 +91,14 @@ public class ReadStoreService<A extends Aggregate> {
 
     }
 
-    private record EventKey<A extends Aggregate>(String aggregateId, Class<? extends A> aggregateClass ){
+    private record EventKey<A extends Aggregate>(String aggregateId, Class<? extends A> aggregateClass) {
 
     }
 
     private Function<A, A> applyEvent(Event<A> event) {
-        return (a) -> {
-            Projector<A, Event<A>> matchingProjector
-                    = getProjectorStore().getMatchingProjector((Class<? extends Event<A>>) event.getClass());
-            return matchingProjector.handle(a, event);
-        };
+        return (a) -> Optional.ofNullable(getProjectorStore().getMatchingProjector((Class<? extends Event<A>>) event.getClass()))
+                          .map(matchingProjector -> matchingProjector.handle(a, event))
+                          .orElse(a);
     }
 
     public ProjectorStore<A> getProjectorStore() {
