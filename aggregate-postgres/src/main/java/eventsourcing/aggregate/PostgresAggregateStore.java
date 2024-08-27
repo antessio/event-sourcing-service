@@ -17,6 +17,8 @@ import org.jooq.SQLDialect;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
+import antessio.eventsourcing.jsonconversion.JsonConverter;
+
 public class PostgresAggregateStore<A extends Aggregate> implements AggregateStore<A> {
 
     private static final Logger LOGGER = Logger.getLogger(PostgresAggregateStore.class.getCanonicalName());
@@ -70,9 +72,13 @@ public class PostgresAggregateStore<A extends Aggregate> implements AggregateSto
                         databaseConfiguration.getPassword())
         ) {
             DSLContext create = DSL.using(conn, SQLDialect.POSTGRES);
+            JSON objectJson = JSON.valueOf(jsonConverter.toJson(aggregate));
             create
                     .insertInto(AGGREGATE_TABLE, ID_FIELD, OBJECT_FIELD, TYPE_FIELD)
-                    .values(aggregate.getId(), JSON.valueOf(jsonConverter.toJson(aggregate)), aggregate.getClass().getCanonicalName())
+                    .values(aggregate.getId(), objectJson, aggregate.getClass().getCanonicalName())
+                    .onConflict(ID_FIELD, TYPE_FIELD)
+                    .doUpdate()
+                    .set(OBJECT_FIELD, objectJson)
                     .execute();
         } catch (Exception e) {
             throw new eventsourcing.aggregate.DataAccessException(e);

@@ -1,4 +1,4 @@
-package eventsourcing.aggregate;
+package antessio.eventsourcing.jsonconversion;
 
 public interface JsonConverter {
 

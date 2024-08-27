@@ -3,6 +3,7 @@ package antessio.eventsourcing;
 import java.util.List;
 import java.util.Optional;
 
+import eventsourcing.Command;
 import eventsourcing.Event;
 import eventsourcing.EventStore;
 import eventsourcing.Projector;
@@ -11,7 +12,7 @@ import eventsourcing.aggregate.Aggregate;
 import eventsourcing.aggregate.AggregateStore;
 
 /**
- * This allows the source to publish a {@link Command} that triggers an {@link Event} that eventually
+ * This allows the source to publish a {@link eventsourcing.Command} that triggers an {@link Event} that eventually
  * is projected, through a {@link Projector}, on a {@link Aggregate}
  * @param <A>
  */

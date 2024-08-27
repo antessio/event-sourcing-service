@@ -1,17 +1,17 @@
-package antessio.eventsourcing.inmemory.wallet.projector;
+package testutils.wallet.projector;
 
 import java.util.List;
 import java.util.Optional;
 
-import antessio.eventsourcing.EventSourcingService;
-import antessio.eventsourcing.ReadStoreService;
-import antessio.eventsourcing.inmemory.wallet.Wallet;
-import antessio.eventsourcing.inmemory.wallet.events.WalletCreatedEvent;
-import antessio.eventsourcing.inmemory.wallet.events.WalletTopUpExecuted;
+
 import eventsourcing.Projector;
+import testutils.wallet.Wallet;
+import testutils.wallet.events.WalletCreatedEvent;
+import testutils.wallet.events.WalletTopUpExecuted;
 
 
 public final class WalletProjections {
+
     private static final List<? extends Projector<Wallet, ? extends Record>> projectors = List.of(
             walletCreatedSubscription(),
             walletTopUpExecutedSubscription()
@@ -20,16 +20,17 @@ public final class WalletProjections {
     private WalletProjections() {
     }
 
-    public static void registerProjections(EventSourcingService<Wallet> eventSourcingService) {
-        projectors.forEach(eventSourcingService::registerProjector);
+    public static List<? extends Projector<Wallet, ? extends Record>> getProjectors() {
+        return projectors;
     }
 
     private static Projector<Wallet, WalletTopUpExecuted> walletTopUpExecutedSubscription() {
         return new Projector<>() {
             @Override
             public Wallet handle(Wallet existingAggregate, WalletTopUpExecuted eventPayload) {
-                if (existingAggregate == null)
+                if (existingAggregate == null) {
                     throw new IllegalStateException("can't apply event to non-existing aggregate");
+                }
                 return new Wallet(
                         existingAggregate.id(),
                         existingAggregate.amount()
@@ -60,11 +61,6 @@ public final class WalletProjections {
                 return WalletCreatedEvent.class;
             }
         };
-    }
-
-
-    public static void registerProjections(ReadStoreService<Wallet> readStore) {
-        projectors.forEach(readStore::registerProjector);
     }
 
 }

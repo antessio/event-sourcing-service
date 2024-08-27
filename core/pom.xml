@@ -4,12 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>antessio</groupId>
-        <artifactId>event-sourcing</artifactId>
+        <groupId>antessio.event-sourcing</groupId>
+        <artifactId>parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>antessio.event-sourcing</groupId>
     <artifactId>core</artifactId>
 
     <properties>
@@ -35,6 +34,11 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>antessio.event-sourcing</groupId>
+            <artifactId>command-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
@@ -52,6 +56,26 @@
             <version>3.26.3</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>antessio.event-sourcing</groupId>
+            <artifactId>aggregate-postgres</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>antessio.event-sourcing</groupId>
+            <artifactId>test-utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <!-- Other project configurations -->
     <build>
@@ -65,7 +89,18 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
 </project>

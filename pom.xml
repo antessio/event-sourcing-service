@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>antessio</groupId>
-    <artifactId>event-sourcing</artifactId>
+    <groupId>antessio.event-sourcing</groupId>
+    <artifactId>parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>event-sourcing</name>
@@ -14,6 +14,8 @@
         <module>projector-api</module>
         <module>event-api</module>
         <module>aggregate-postgres</module>
-        <module>test-containers</module>
+        <module>test-utils</module>
+        <module>command-api</module>
+        <module>json-conversion-api</module>
     </modules>
 </project>

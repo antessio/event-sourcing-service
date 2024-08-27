@@ -1,9 +1,8 @@
-package antessio.eventsourcing;
+package eventsourcing;
 
 import java.util.List;
 import java.util.Optional;
 
-import eventsourcing.Event;
 import eventsourcing.aggregate.Aggregate;
 
 /**

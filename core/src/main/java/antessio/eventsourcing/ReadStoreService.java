@@ -14,7 +14,7 @@ import eventsourcing.aggregate.Aggregate;
 import eventsourcing.aggregate.AggregateStore;
 
 /**
- * This component is used by both source and listeners. The event source use it to update an {@link Aggregate} from a {@link Command} while a listener use it to
+ * This component is used by both source and listeners. The event source use it to update an {@link Aggregate} from a {@link eventsourcing.Command} while a listener use it to
  * update one or more {@link Aggregate}s from the events.
  */
 public class ReadStoreService<A extends Aggregate> {

@@ -13,14 +13,14 @@ import org.junit.jupiter.api.Test;
 
 
 import antessio.eventsourcing.ReadStoreService;
-import antessio.eventsourcing.inmemory.wallet.Wallet;
-import antessio.eventsourcing.inmemory.wallet.events.WalletCreatedEvent;
-import antessio.eventsourcing.inmemory.wallet.events.WalletTopUpExecuted;
-import antessio.eventsourcing.inmemory.wallet.projector.WalletProjections;
 import eventsourcing.Event;
 import eventsourcing.EventStore;
 import eventsourcing.ProjectorStore;
 import eventsourcing.aggregate.AggregateStore;
+import testutils.wallet.Wallet;
+import testutils.wallet.events.WalletCreatedEvent;
+import testutils.wallet.events.WalletTopUpExecuted;
+import testutils.wallet.projector.WalletProjections;
 
 public class BiTest {
     private ProjectorStore<Wallet> projectorStore;
@@ -35,7 +35,7 @@ public class BiTest {
         eventStore = new InMemoryEventStore();
 
         readStore = new ReadStoreService<>(projectorStore, aggregateStore, eventStore);
-        WalletProjections.registerProjections(readStore);
+        WalletProjections.getProjectors().forEach(readStore::registerProjector);
     }
 
     @Test

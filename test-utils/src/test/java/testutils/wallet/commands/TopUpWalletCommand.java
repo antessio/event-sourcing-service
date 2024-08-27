@@ -1,4 +1,4 @@
-package antessio.eventsourcing.inmemory.wallet.commands;
+package testutils.wallet.commands;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import antessio.eventsourcing.Command;
-import antessio.eventsourcing.inmemory.wallet.Wallet;
-import antessio.eventsourcing.inmemory.wallet.events.WalletTopUpExecuted;
+import eventsourcing.Command;
 import eventsourcing.Event;
+import testutils.wallet.Wallet;
+import testutils.wallet.events.WalletTopUpExecuted;
 
 
 public record TopUpWalletCommand(UUID walletId, BigDecimal amount) implements Command<Wallet> {

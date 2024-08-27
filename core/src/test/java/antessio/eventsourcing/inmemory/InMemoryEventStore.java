@@ -2,11 +2,10 @@ package antessio.eventsourcing.inmemory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import antessio.eventsourcing.inmemory.wallet.Wallet;
 import eventsourcing.Event;
 import eventsourcing.EventStore;
+import testutils.wallet.Wallet;
 
 
 class InMemoryEventStore implements EventStore<Wallet> {
