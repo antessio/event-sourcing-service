@@ -8,7 +8,7 @@ import antessio.eventsourcing.inmemory.wallet.Wallet;
 import eventsourcing.Event;
 
 
-public record WalletTopUpExecuted(UUID eventId, UUID walletId, BigDecimal amount, Instant occurredAt) implements Event<Wallet, UUID> {
+public record WalletTopUpExecuted(UUID eventId, UUID walletId, BigDecimal amount, Instant occurredAt) implements Event<Wallet> {
 
 
     @Override
@@ -22,8 +22,8 @@ public record WalletTopUpExecuted(UUID eventId, UUID walletId, BigDecimal amount
     }
 
     @Override
-    public UUID getAggregateId() {
-        return walletId;
+    public String getAggregateId() {
+        return walletId.toString();
     }
 
     @Override

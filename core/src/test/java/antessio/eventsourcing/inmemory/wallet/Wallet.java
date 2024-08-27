@@ -6,10 +6,12 @@ import java.util.UUID;
 import eventsourcing.aggregate.Aggregate;
 
 
-public record Wallet(UUID id, BigDecimal amount, UUID ownerId) implements Aggregate<UUID> {
+public record Wallet(UUID id, BigDecimal amount, UUID ownerId) implements Aggregate {
 
-    public UUID getId(){
-        return id;
+
+    @Override
+    public String getId() {
+        return id.toString();
     }
 
 }

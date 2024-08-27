@@ -12,15 +12,15 @@ import antessio.eventsourcing.inmemory.wallet.events.WalletTopUpExecuted;
 import eventsourcing.Event;
 
 
-public record TopUpWalletCommand(UUID walletId, BigDecimal amount) implements Command<Wallet, UUID> {
+public record TopUpWalletCommand(UUID walletId, BigDecimal amount) implements Command<Wallet> {
 
     @Override
-    public Optional<UUID> getAggregateId() {
-        return Optional.of(walletId);
+    public Optional<String> getAggregateId() {
+        return Optional.of(walletId).map(UUID::toString);
     }
 
     @Override
-    public List<Event<Wallet, UUID>> process() {
+    public List<Event<Wallet>> process() {
         return List.of(
                 new WalletTopUpExecuted(UUID.randomUUID(), this.walletId, this.amount, Instant.now())
         );

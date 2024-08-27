@@ -2,7 +2,6 @@ package antessio.eventsourcing.inmemory.wallet.projector;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import antessio.eventsourcing.EventSourcingService;
 import antessio.eventsourcing.ReadStoreService;
@@ -13,7 +12,7 @@ import eventsourcing.Projector;
 
 
 public final class WalletProjections {
-    private static final List<? extends Projector<Wallet, ? extends Record, UUID>> projectors = List.of(
+    private static final List<? extends Projector<Wallet, ? extends Record>> projectors = List.of(
             walletCreatedSubscription(),
             walletTopUpExecutedSubscription()
     );
@@ -21,11 +20,11 @@ public final class WalletProjections {
     private WalletProjections() {
     }
 
-    public static void registerProjections(EventSourcingService<Wallet, UUID> eventSourcingService) {
+    public static void registerProjections(EventSourcingService<Wallet> eventSourcingService) {
         projectors.forEach(eventSourcingService::registerProjector);
     }
 
-    private static Projector<Wallet, WalletTopUpExecuted, UUID> walletTopUpExecutedSubscription() {
+    private static Projector<Wallet, WalletTopUpExecuted> walletTopUpExecutedSubscription() {
         return new Projector<>() {
             @Override
             public Wallet handle(Wallet existingAggregate, WalletTopUpExecuted eventPayload) {
@@ -45,7 +44,7 @@ public final class WalletProjections {
         };
     }
 
-    private static Projector<Wallet, WalletCreatedEvent, UUID> walletCreatedSubscription() {
+    private static Projector<Wallet, WalletCreatedEvent> walletCreatedSubscription() {
         return new Projector<>() {
             @Override
             public Wallet handle(Wallet existingAggregate, WalletCreatedEvent eventPayload) {
@@ -64,7 +63,7 @@ public final class WalletProjections {
     }
 
 
-    public static void registerProjections(ReadStoreService<Wallet, UUID> readStore) {
+    public static void registerProjections(ReadStoreService<Wallet> readStore) {
         projectors.forEach(readStore::registerProjector);
     }
 

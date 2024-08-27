@@ -17,14 +17,14 @@ import eventsourcing.aggregate.AggregateStore;
  * This component is used by both source and listeners. The event source use it to update an {@link Aggregate} from a {@link Command} while a listener use it to
  * update one or more {@link Aggregate}s from the events.
  */
-public class ReadStoreService<A extends Aggregate<ID>, ID> {
+public class ReadStoreService<A extends Aggregate> {
 
 
-    private final ProjectorStore<A, ID> projectorStore;
+    private final ProjectorStore<A> projectorStore;
 
-    private final AggregateStore<A, ID> aggregateStore;
+    private final AggregateStore<A> aggregateStore;
 
-    private final EventStore<A, ID> eventStore;
+    private final EventStore<A> eventStore;
 
 
     /**
@@ -33,7 +33,7 @@ public class ReadStoreService<A extends Aggregate<ID>, ID> {
      * @param aggregateStore Where the {@link Aggregate}s are stored.
      * @param eventStore     Where the {@link Event}s are stored.
      */
-    public ReadStoreService(ProjectorStore<A, ID> projectorStore, AggregateStore<A, ID> aggregateStore, EventStore<A, ID> eventStore) {
+    public ReadStoreService(ProjectorStore<A> projectorStore, AggregateStore<A> aggregateStore, EventStore<A> eventStore) {
         this.projectorStore = projectorStore;
         this.aggregateStore = aggregateStore;
         this.eventStore = eventStore;
@@ -46,8 +46,8 @@ public class ReadStoreService<A extends Aggregate<ID>, ID> {
      * @param projector
      * @param <E>
      */
-    public <E extends Event<A, ID>> void registerProjector(Projector<A, E, ID> projector) {
-        getProjectorStore().addProjector((Projector<A, Event<A, ID>, ID>) projector);
+    public <E extends Event<A>> void registerProjector(Projector<A, E> projector) {
+        getProjectorStore().addProjector((Projector<A, Event<A>>) projector);
     }
 
     /**
@@ -57,19 +57,19 @@ public class ReadStoreService<A extends Aggregate<ID>, ID> {
      *
      * @return
      */
-    public Optional<A> getAggregate(ID id) {
-        return getAggregateStore().get(id);
+    public Optional<A> getAggregate(String id, Class<A> cls) {
+        return getAggregateStore().get(id, cls);
     }
     public List<A> processEvents() {
-        List<Event<A, ID>> unprocessedEvents = eventStore.getUnprocessedEvents();
+        List<Event<A>> unprocessedEvents = eventStore.getUnprocessedEvents();
         List<A> updatedAggregates = processEvents(unprocessedEvents);
         eventStore.markAsProcessed(unprocessedEvents);
         return updatedAggregates;
     }
-    public List<A> processEvents(List<Event<A, ID>> events) {
+    public List<A> processEvents(List<Event<A>> events) {
         // group events by aggregate
         return events.stream()
-                     .collect(Collectors.groupingBy(Event::getAggregateId))
+                     .collect(Collectors.groupingBy(e -> new EventKey<>(e.getAggregateId(), e.getAggregateClass())))
                      .entrySet()
                      .stream()
                      .map(entry -> {
@@ -79,7 +79,7 @@ public class ReadStoreService<A extends Aggregate<ID>, ID> {
                                                       .reduce(Function::andThen)
                                                       .orElseGet(Function::identity);
                          // apply projection to events
-                         return result.apply(getAggregateStore().get(entry.getKey())
+                         return result.apply(getAggregateStore().get(entry.getKey().aggregateId, entry.getKey().aggregateClass)
                                                                 .orElse(null));
 
 
@@ -90,23 +90,27 @@ public class ReadStoreService<A extends Aggregate<ID>, ID> {
 
     }
 
-    private Function<A, A> applyEvent(Event<A, ID> event) {
+    private record EventKey<A extends Aggregate>(String aggregateId, Class<? extends A> aggregateClass ){
+
+    }
+
+    private Function<A, A> applyEvent(Event<A> event) {
         return (a) -> {
-            Projector<A, Event<A, ID>, ID> matchingProjector
-                    = getProjectorStore().getMatchingProjector((Class<? extends Event<A, ID>>) event.getClass());
+            Projector<A, Event<A>> matchingProjector
+                    = getProjectorStore().getMatchingProjector((Class<? extends Event<A>>) event.getClass());
             return matchingProjector.handle(a, event);
         };
     }
 
-    public ProjectorStore<A, ID> getProjectorStore() {
+    public ProjectorStore<A> getProjectorStore() {
         return projectorStore;
     }
 
-    public AggregateStore<A, ID> getAggregateStore() {
+    public AggregateStore<A> getAggregateStore() {
         return aggregateStore;
     }
 
-    public EventStore<A, ID> getEventStore() {
+    public EventStore<A> getEventStore() {
         return eventStore;
     }
 

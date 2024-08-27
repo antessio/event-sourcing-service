@@ -3,19 +3,20 @@ package antessio.eventsourcing.inmemory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import antessio.eventsourcing.inmemory.wallet.Wallet;
 import eventsourcing.aggregate.AggregateStore;
 
 
-class InMemoryAggregateStore implements AggregateStore<Wallet, UUID> {
+class InMemoryAggregateStore implements AggregateStore<Wallet> {
 
-    private final Map<UUID, Wallet> aggregates = new HashMap<>();
+    private final Map<String, Wallet> aggregates = new HashMap<>();
+
 
     @Override
-    public Optional<Wallet> get(UUID uuid) {
-        return Optional.ofNullable(aggregates.get(uuid));
+    public Optional<Wallet> get(String id, Class<? extends Wallet> cls) {
+        return Optional.ofNullable(aggregates.get(id))
+                       .filter(a -> a.getClass().isAssignableFrom(cls));
     }
 
     @Override

@@ -1,7 +1,9 @@
 package eventsourcing.aggregate;
 
 
-public interface Aggregate<ID> {
-    ID id();
+public interface Aggregate {
+
+
+    String getId();
 
 }

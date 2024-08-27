@@ -13,5 +13,7 @@
         <module>aggregate-api</module>
         <module>projector-api</module>
         <module>event-api</module>
+        <module>aggregate-postgres</module>
+        <module>test-containers</module>
     </modules>
 </project>

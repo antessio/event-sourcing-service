@@ -12,15 +12,15 @@ import antessio.eventsourcing.inmemory.wallet.events.WalletCreatedEvent;
 import eventsourcing.Event;
 
 
-public record CreateWalletCommand(UUID ownerId) implements Command<Wallet, UUID> {
+public record CreateWalletCommand(UUID ownerId) implements Command<Wallet> {
 
     @Override
-    public Optional<UUID> getAggregateId() {
+    public Optional<String> getAggregateId() {
         return Optional.empty();
     }
 
     @Override
-    public List<Event<Wallet, UUID>> process() {
+    public List<Event<Wallet>> process() {
         return List.of(new WalletCreatedEvent(
                 UUID.randomUUID(),
                 UUID.randomUUID(),

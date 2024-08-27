@@ -10,13 +10,13 @@ import eventsourcing.aggregate.Aggregate;
  * Events eventually contribute the changing the status of the {@link Aggregate} through projectors
  * @param <A>
  */
-public interface Event <A extends Aggregate<ID>, ID>{
+public interface Event <A extends Aggregate>{
 
     UUID getEventId();
 
     Instant getOccurredAt();
 
-    ID getAggregateId();
+    String getAggregateId();
     /**
      * An event must refer to one specific {@link Aggregate}
      * @return
