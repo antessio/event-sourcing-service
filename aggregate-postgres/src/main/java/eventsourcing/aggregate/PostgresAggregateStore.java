@@ -21,12 +21,12 @@ import antessio.eventsourcing.jsonconversion.JsonConverter;
 
 public class PostgresAggregateStore<A extends Aggregate> implements AggregateStore<A> {
 
-    private static final Logger LOGGER = Logger.getLogger(PostgresAggregateStore.class.getCanonicalName());
+    //private static final Logger LOGGER = Logger.getLogger(PostgresAggregateStore.class.getCanonicalName());
 
-    public static final Field<String> ID_FIELD = field("id", String.class);
-    public static final Field<JSON> OBJECT_FIELD = field("object", JSON.class);
-    public static final Field<String> TYPE_FIELD = field("type", String.class);
-    public static final Table<Record> AGGREGATE_TABLE = table("event_sourcing.aggregate");
+    private static final Field<String> ID_FIELD = field("id", String.class);
+    private static final Field<JSON> OBJECT_FIELD = field("object", JSON.class);
+    private static final Field<String> TYPE_FIELD = field("type", String.class);
+    private static final Table<Record> AGGREGATE_TABLE = table("event_sourcing.aggregate");
     private final JsonConverter jsonConverter;
     private final DatabaseConfiguration databaseConfiguration;
 
