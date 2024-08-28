@@ -8,12 +8,15 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import antessio.eventsourcing.containers.PostgresContainer;
 import antessio.eventsourcing.inmemory.InMemoryAggregateStore;
 import antessio.eventsourcing.inmemory.InMemoryEventStore;
 import antessio.eventsourcing.inmemory.InMemoryProjectorStore;
@@ -36,7 +39,19 @@ class WalletTest {
     private AggregateStoreDatabaseInitializer aggregateStoreDatabaseInitializer;
     private EventStoreDatabaseConfiguration eventStoreDatabaseConfiguration;
     private EventStoreDatabaseInitializer eventStoreDatabaseInitializer;
+    @BeforeAll
+    static void beforeAll() {
+        if (SystemUtils.isTestContainerEnabled()){
+            PostgresContainer.start();
+        }
+    }
 
+    @AfterAll
+    static void afterAll() {
+        if (SystemUtils.isTestContainerEnabled()){
+            PostgresContainer.stop();
+        }
+    }
 
     @BeforeEach
     void setUp() {
