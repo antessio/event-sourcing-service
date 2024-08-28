@@ -8,7 +8,7 @@ import eventsourcing.aggregate.AggregateStore;
 import testutils.wallet.Wallet;
 
 
-class InMemoryAggregateStore implements AggregateStore<Wallet> {
+public class InMemoryAggregateStore implements AggregateStore<Wallet> {
 
     private final Map<String, Wallet> aggregates = new HashMap<>();
 

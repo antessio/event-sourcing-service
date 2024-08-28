@@ -2,7 +2,6 @@ package eventsourcing.aggregate;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -22,8 +21,8 @@ import utils.SystemUtils;
 
 class PostgresAggregateStoreTest {
 
-    private DatabaseConfiguration databaseConfiguration;
-    private DatabaseInitializer databaseInitializer;
+    private AggregateStoreDatabaseConfiguration aggregateStoreDatabaseConfiguration;
+    private AggregateStoreDatabaseInitializer aggregateStoreDatabaseInitializer;
     @BeforeAll
     static void beforeAll() {
         if (SystemUtils.isTestContainerEnabled()){
@@ -43,24 +42,24 @@ class PostgresAggregateStoreTest {
     @BeforeEach
     void setUp() {
 
-        databaseConfiguration = new DatabaseConfiguration(
+        aggregateStoreDatabaseConfiguration = new AggregateStoreDatabaseConfiguration(
                 SystemUtils.getPostgresUrl(),
                 "event_sourcing_user",
                 "event_sourcing_password");
-        databaseInitializer = new DatabaseInitializer(databaseConfiguration);
-        databaseInitializer.initialize();
+        aggregateStoreDatabaseInitializer = new AggregateStoreDatabaseInitializer(aggregateStoreDatabaseConfiguration);
+        aggregateStoreDatabaseInitializer.initialize();
     }
 
     @AfterEach
     void tearDown() {
-        databaseInitializer.cleanup();
+        aggregateStoreDatabaseInitializer.cleanup();
     }
 
     @Test
     void store() {
         // given
         Wallet wallet = new Wallet(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN);
-        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), databaseConfiguration);
+        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
         postgresAggregateStore.put(wallet);
 
         // when
@@ -77,7 +76,7 @@ class PostgresAggregateStoreTest {
     void getNotExisting() {
         // given
         Wallet wallet = new Wallet(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN);
-        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), databaseConfiguration);
+        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
 
         // when
         Optional<Wallet> maybeAggregate = postgresAggregateStore.get(wallet.getId(), Wallet.class);
@@ -91,7 +90,7 @@ class PostgresAggregateStoreTest {
     void putExisting() {
         // given
         Wallet wallet = new Wallet(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN);
-        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), databaseConfiguration);
+        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
         postgresAggregateStore.put(wallet);
 
         Wallet sameWallet = new Wallet(wallet.id(), wallet.ownerId(), BigDecimal.ONE);

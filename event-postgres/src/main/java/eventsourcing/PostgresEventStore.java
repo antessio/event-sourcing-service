@@ -35,13 +35,13 @@ public class PostgresEventStore<A extends Aggregate> implements EventStore<A> {
     private final static Field<Boolean> PROCESSED_FIELD = field("processed", Boolean.class);
     private final static Field<Instant> OCCURRED_AT_FIELD = field("occurred_at", Instant.class);
     private final JsonConverter jsonConverter;
-    private final DatabaseConfiguration databaseConfiguration;
+    private final EventStoreDatabaseConfiguration eventStoreDatabaseConfiguration;
 
     public PostgresEventStore(
             JsonConverter jsonConverter,
-            DatabaseConfiguration databaseConfiguration) {
+            EventStoreDatabaseConfiguration eventStoreDatabaseConfiguration) {
         this.jsonConverter = jsonConverter;
-        this.databaseConfiguration = databaseConfiguration;
+        this.eventStoreDatabaseConfiguration = eventStoreDatabaseConfiguration;
     }
 
     @Override
@@ -116,9 +116,9 @@ public class PostgresEventStore<A extends Aggregate> implements EventStore<A> {
     private <T> T execute(Function<DSLContext, T> dslContextTFunction) {
         try (
                 Connection conn = DriverManager.getConnection(
-                        databaseConfiguration.getUrl(),
-                        databaseConfiguration.getUser(),
-                        databaseConfiguration.getPassword())
+                        eventStoreDatabaseConfiguration.getUrl(),
+                        eventStoreDatabaseConfiguration.getUser(),
+                        eventStoreDatabaseConfiguration.getPassword())
         ) {
             DSLContext create = DSL.using(conn, SQLDialect.POSTGRES);
 
@@ -132,9 +132,9 @@ public class PostgresEventStore<A extends Aggregate> implements EventStore<A> {
     private void execute(Consumer<DSLContext> dslContextConsumer) {
         try (
                 Connection conn = DriverManager.getConnection(
-                        databaseConfiguration.getUrl(),
-                        databaseConfiguration.getUser(),
-                        databaseConfiguration.getPassword())
+                        eventStoreDatabaseConfiguration.getUrl(),
+                        eventStoreDatabaseConfiguration.getUser(),
+                        eventStoreDatabaseConfiguration.getPassword())
         ) {
             DSLContext create = DSL.using(conn, SQLDialect.POSTGRES);
 

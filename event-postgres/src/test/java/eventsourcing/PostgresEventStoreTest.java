@@ -22,8 +22,8 @@ import utils.SystemUtils;
 
 class PostgresEventStoreTest {
 
-    private DatabaseConfiguration databaseConfiguration;
-    private DatabaseInitializer databaseInitializer;
+    private EventStoreDatabaseConfiguration eventStoreDatabaseConfiguration;
+    private EventStoreDatabaseInitializer eventStoreDatabaseInitializer;
     private PostgresEventStore<Wallet> walletPostgresEventStore;
 
     @BeforeAll
@@ -44,19 +44,19 @@ class PostgresEventStoreTest {
     @BeforeEach
     void setUp() {
 
-        databaseConfiguration = new DatabaseConfiguration(
+        eventStoreDatabaseConfiguration = new EventStoreDatabaseConfiguration(
                 SystemUtils.getPostgresUrl(),
                 "event_sourcing_user",
                 "event_sourcing_password");
-        databaseInitializer = new DatabaseInitializer(databaseConfiguration);
-        databaseInitializer.initialize();
-        walletPostgresEventStore = new PostgresEventStore<>(new JacksonJsonConverter(), databaseConfiguration);
+        eventStoreDatabaseInitializer = new EventStoreDatabaseInitializer(eventStoreDatabaseConfiguration);
+        eventStoreDatabaseInitializer.initialize();
+        walletPostgresEventStore = new PostgresEventStore<>(new JacksonJsonConverter(), eventStoreDatabaseConfiguration);
 
     }
 
     @AfterEach
     void tearDown() {
-        databaseInitializer.cleanup();
+        eventStoreDatabaseInitializer.cleanup();
     }
 
 

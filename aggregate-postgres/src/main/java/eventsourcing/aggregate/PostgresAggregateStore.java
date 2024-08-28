@@ -7,7 +7,6 @@ import static org.jooq.impl.DSL.table;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -28,13 +27,13 @@ public class PostgresAggregateStore<A extends Aggregate> implements AggregateSto
     private static final Field<String> TYPE_FIELD = field("type", String.class);
     private static final Table<Record> AGGREGATE_TABLE = table("event_sourcing.aggregate");
     private final JsonConverter jsonConverter;
-    private final DatabaseConfiguration databaseConfiguration;
+    private final AggregateStoreDatabaseConfiguration aggregateStoreDatabaseConfiguration;
 
     public PostgresAggregateStore(
             JsonConverter jsonConverter,
-            DatabaseConfiguration databaseConfiguration) {
+            AggregateStoreDatabaseConfiguration aggregateStoreDatabaseConfiguration) {
         this.jsonConverter = jsonConverter;
-        this.databaseConfiguration = databaseConfiguration;
+        this.aggregateStoreDatabaseConfiguration = aggregateStoreDatabaseConfiguration;
     }
 
 
@@ -42,9 +41,9 @@ public class PostgresAggregateStore<A extends Aggregate> implements AggregateSto
     public Optional<A> get(String id, Class<? extends A> cls) {
         try (
                 Connection conn = DriverManager.getConnection(
-                        databaseConfiguration.getUrl(),
-                        databaseConfiguration.getUser(),
-                        databaseConfiguration.getPassword())
+                        aggregateStoreDatabaseConfiguration.getUrl(),
+                        aggregateStoreDatabaseConfiguration.getUser(),
+                        aggregateStoreDatabaseConfiguration.getPassword())
         ) {
             DSLContext create = DSL.using(conn, SQLDialect.POSTGRES);
 
@@ -67,9 +66,9 @@ public class PostgresAggregateStore<A extends Aggregate> implements AggregateSto
     public void put(A aggregate) {
         try (
                 Connection conn = DriverManager.getConnection(
-                        databaseConfiguration.getUrl(),
-                        databaseConfiguration.getUser(),
-                        databaseConfiguration.getPassword())
+                        aggregateStoreDatabaseConfiguration.getUrl(),
+                        aggregateStoreDatabaseConfiguration.getUser(),
+                        aggregateStoreDatabaseConfiguration.getPassword())
         ) {
             DSLContext create = DSL.using(conn, SQLDialect.POSTGRES);
             JSON objectJson = JSON.valueOf(jsonConverter.toJson(aggregate));

@@ -1,24 +1,24 @@
 package eventsourcing;
 
-public final class DatabaseConfiguration {
+public final class EventStoreDatabaseConfiguration {
 
     private final String url;
     private final String user;
     private final String password;
 
 
-    public DatabaseConfiguration(String url, String user, String password) {
+    public EventStoreDatabaseConfiguration(String url, String user, String password) {
         this.url = url;
         this.user = user;
         this.password = password;
     }
 
-    public static DatabaseConfiguration fromEnvironmentVariables() {
+    public static EventStoreDatabaseConfiguration fromEnvironmentVariables() {
         String url = System.getenv("EVENT_STORE_DB_URL");
         String user = System.getenv("EVENT_STORE_DB_USER");
         String password = System.getenv("EVENT_STORE_DB_PASSWORD");
 
-        return new DatabaseConfiguration(url, user, password);
+        return new EventStoreDatabaseConfiguration(url, user, password);
 
     }
 

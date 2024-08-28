@@ -3,7 +3,6 @@ package antessio.eventsourcing.inmemory;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterAll;
@@ -16,8 +15,8 @@ import antessio.eventsourcing.EventSourcingService;
 
 import antessio.eventsourcing.containers.PostgresContainer;
 import eventsourcing.aggregate.AggregateStore;
-import eventsourcing.aggregate.DatabaseConfiguration;
-import eventsourcing.aggregate.DatabaseInitializer;
+import eventsourcing.aggregate.AggregateStoreDatabaseConfiguration;
+import eventsourcing.aggregate.AggregateStoreDatabaseInitializer;
 import eventsourcing.aggregate.PostgresAggregateStore;
 import jsonconversion.JacksonJsonConverter;
 import testutils.wallet.Wallet;
@@ -33,7 +32,7 @@ class WalletPostgresAggregateStoreTest {
     private InMemoryEventStore inMemoryEventStore;
 
     private EventSourcingService<Wallet> eventStore;
-    private DatabaseInitializer databaseInitializer;
+    private AggregateStoreDatabaseInitializer aggregateStoreDatabaseInitializer;
 
     @BeforeAll
     static void beforeAll() {
@@ -51,14 +50,14 @@ class WalletPostgresAggregateStoreTest {
 
     @BeforeEach
     void setUp() {
-        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(
+        AggregateStoreDatabaseConfiguration aggregateStoreDatabaseConfiguration = new AggregateStoreDatabaseConfiguration(
                 SystemUtils.getPostgresUrl(),
                 "event_sourcing_user",
                 "event_sourcing_password");
-        databaseInitializer = new DatabaseInitializer(databaseConfiguration);
-        databaseInitializer.initialize();
+        aggregateStoreDatabaseInitializer = new AggregateStoreDatabaseInitializer(aggregateStoreDatabaseConfiguration);
+        aggregateStoreDatabaseInitializer.initialize();
         inMemoryProjectorStore = new InMemoryProjectorStore();
-        postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), databaseConfiguration);
+        postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
         inMemoryEventStore = new InMemoryEventStore();
         eventStore = new EventSourcingService<>(inMemoryProjectorStore, postgresAggregateStore, inMemoryEventStore);
 
@@ -67,7 +66,7 @@ class WalletPostgresAggregateStoreTest {
 
     @AfterEach
     void tearDown() {
-        databaseInitializer.cleanup();
+        aggregateStoreDatabaseInitializer.cleanup();
     }
 
     @Test

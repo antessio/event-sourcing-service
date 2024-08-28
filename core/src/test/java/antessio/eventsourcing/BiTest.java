@@ -1,4 +1,4 @@
-package antessio.eventsourcing.inmemory;
+package antessio.eventsourcing;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -12,7 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import antessio.eventsourcing.ReadStoreService;
+import antessio.eventsourcing.inmemory.InMemoryAggregateStore;
+import antessio.eventsourcing.inmemory.InMemoryEventStore;
+import antessio.eventsourcing.inmemory.InMemoryProjectorStore;
 import eventsourcing.Event;
 import eventsourcing.EventStore;
 import eventsourcing.ProjectorStore;

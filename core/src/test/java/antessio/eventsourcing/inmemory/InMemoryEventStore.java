@@ -8,7 +8,7 @@ import eventsourcing.EventStore;
 import testutils.wallet.Wallet;
 
 
-class InMemoryEventStore implements EventStore<Wallet> {
+public class InMemoryEventStore implements EventStore<Wallet> {
 
     private final List<Event<Wallet>> aggregateEvents = new ArrayList<>();
     private final List<Event<Wallet>> unprocessedEvents = new ArrayList<>();

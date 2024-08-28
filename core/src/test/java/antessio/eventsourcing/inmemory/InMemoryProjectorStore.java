@@ -9,7 +9,7 @@ import eventsourcing.ProjectorStore;
 import testutils.wallet.Wallet;
 
 
-class InMemoryProjectorStore implements ProjectorStore<Wallet> {
+public class InMemoryProjectorStore implements ProjectorStore<Wallet> {
 
     private final Map<Class<? extends Event<Wallet>>, Projector<Wallet, Event<Wallet>>> projectorsMap = new HashMap<>();
 
