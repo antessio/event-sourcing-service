@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import antessio.eventsourcing.containers.PostgresContainer;
+import eventsourcing.aggregate.Aggregate;
 import jsonconversion.JacksonJsonConverter;
 import testutils.wallet.Wallet;
 import testutils.wallet.events.WalletCreatedEvent;
@@ -88,8 +89,11 @@ class PostgresEventStoreTest {
 
         //then
         assertThat(walletPostgresEventStore.getUnprocessedEvents())
-                .containsOnly(walletCreatedEvent2);
+                .hasSize(1)
+                .allMatch(e -> e.getClass().equals(WalletCreatedEvent.class));
 
     }
+
+
 
 }

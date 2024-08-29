@@ -8,7 +8,7 @@ import eventsourcing.aggregate.Aggregate;
  * @param <A>
  * @param <E>
  */
-public interface Projector<A extends Aggregate, E extends Event<A>> {
+public interface Projector<A extends Aggregate, E extends Event<A>>{
 
     /**
      * Main function that applies the event to the aggregate

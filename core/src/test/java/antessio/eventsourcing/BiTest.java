@@ -25,10 +25,10 @@ import testutils.wallet.events.WalletTopUpExecuted;
 import testutils.wallet.projector.WalletProjections;
 
 public class BiTest {
-    private ProjectorStore<Wallet> projectorStore;
-    private AggregateStore<Wallet> aggregateStore;
-    private EventStore<Wallet> eventStore;
-    private ReadStoreService<Wallet> readStore;
+    private ProjectorStore projectorStore;
+    private AggregateStore aggregateStore;
+    private EventStore eventStore;
+    private ReadStoreService readStore;
 
     @BeforeEach
     void setUp() {
@@ -36,7 +36,7 @@ public class BiTest {
         aggregateStore = new InMemoryAggregateStore();
         eventStore = new InMemoryEventStore();
 
-        readStore = new ReadStoreService<>(projectorStore, aggregateStore, eventStore);
+        readStore = new ReadStoreService(projectorStore, aggregateStore, eventStore);
         WalletProjections.getProjectors().forEach(readStore::registerProjector);
     }
 

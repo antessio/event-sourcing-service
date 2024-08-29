@@ -18,9 +18,8 @@ import org.jooq.impl.DSL;
 
 import antessio.eventsourcing.jsonconversion.JsonConverter;
 
-public class PostgresAggregateStore<A extends Aggregate> implements AggregateStore<A> {
+public class PostgresAggregateStore implements AggregateStore {
 
-    //private static final Logger LOGGER = Logger.getLogger(PostgresAggregateStore.class.getCanonicalName());
 
     private static final Field<String> ID_FIELD = field("id", String.class);
     private static final Field<JSON> OBJECT_FIELD = field("object", JSON.class);
@@ -36,9 +35,8 @@ public class PostgresAggregateStore<A extends Aggregate> implements AggregateSto
         this.aggregateStoreDatabaseConfiguration = aggregateStoreDatabaseConfiguration;
     }
 
-
     @Override
-    public Optional<A> get(String id, Class<? extends A> cls) {
+    public <A extends Aggregate> Optional<A> get(String id, Class<? extends A> cls) {
         try (
                 Connection conn = DriverManager.getConnection(
                         aggregateStoreDatabaseConfiguration.getUrl(),
@@ -63,7 +61,7 @@ public class PostgresAggregateStore<A extends Aggregate> implements AggregateSto
     }
 
     @Override
-    public void put(A aggregate) {
+    public <A extends Aggregate> void put(A aggregate) {
         try (
                 Connection conn = DriverManager.getConnection(
                         aggregateStoreDatabaseConfiguration.getUrl(),
@@ -82,7 +80,6 @@ public class PostgresAggregateStore<A extends Aggregate> implements AggregateSto
         } catch (Exception e) {
             throw new eventsourcing.aggregate.DataAccessException(e);
         }
-
     }
 
 }

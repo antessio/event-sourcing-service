@@ -14,14 +14,13 @@ import eventsourcing.aggregate.AggregateStore;
 /**
  * This allows the source to publish a {@link eventsourcing.Command} that triggers an {@link Event} that eventually
  * is projected, through a {@link Projector}, on a {@link Aggregate}
- * @param <A>
  */
-public class EventSourcingService<A extends Aggregate> {
+public class EventSourcingService {
 
-    private final ReadStoreService<A> readStoreService;
-    private final ProjectorStore<A> projectorStore;
-    private final AggregateStore<A> aggregateStore;
-    private final EventStore<A> eventStore;
+    private final ReadStoreService readStoreService;
+    private final ProjectorStore projectorStore;
+    private final AggregateStore aggregateStore;
+    private final EventStore eventStore;
 
     /**
      *
@@ -29,8 +28,8 @@ public class EventSourcingService<A extends Aggregate> {
      * @param aggregateStore Where the {@link Aggregate}s are stored.
      * @param eventStore Where the {@link Event}s are stored.
      */
-    public EventSourcingService(ProjectorStore<A> projectorStore, AggregateStore<A> aggregateStore, EventStore<A> eventStore) {
-        this.readStoreService = new ReadStoreService<>(projectorStore, aggregateStore, eventStore);
+    public EventSourcingService(ProjectorStore projectorStore, AggregateStore aggregateStore, EventStore eventStore) {
+        this.readStoreService = new ReadStoreService(projectorStore, aggregateStore, eventStore);
         this.projectorStore = projectorStore;
         this.aggregateStore = aggregateStore;
         this.eventStore = eventStore;
@@ -41,7 +40,7 @@ public class EventSourcingService<A extends Aggregate> {
      * @param command
      * @return
      */
-    public A publish(Command<A> command, ReadStoreService<A> readStoreService) {
+    public <A extends Aggregate> A publish(Command<A> command, ReadStoreService readStoreService) {
         List<Event<A>> eventsToApply = command.process();
 
         eventStore.put(eventsToApply);
@@ -51,7 +50,7 @@ public class EventSourcingService<A extends Aggregate> {
                 .getFirst();
     }
 
-    public A publish(Command<A> command) {
+    public<A extends Aggregate>  A publish(Command<A> command) {
         return publish(command, getReadStoreService());
     }
 
@@ -61,7 +60,7 @@ public class EventSourcingService<A extends Aggregate> {
      * @param projector
      * @param <E>
      */
-    public  <E extends Event<A>> void registerProjector(Projector<A, E> projector) {
+    public  <A extends Aggregate, E extends Event<A>> void registerProjector(Projector<A, E> projector) {
         getProjectorStore().addProjector((Projector<A, Event<A>>) projector);
     }
 
@@ -70,20 +69,20 @@ public class EventSourcingService<A extends Aggregate> {
      * @param id
      * @return
      */
-    public Optional<A> getAggregate(String id, Class<A> cls) {
+    public <A extends Aggregate>  Optional<A> getAggregate(String id, Class<A> cls) {
         return getAggregateStore().get(id, cls);
     }
 
 
-    public ReadStoreService<A> getReadStoreService() {
+    public ReadStoreService getReadStoreService() {
         return readStoreService;
     }
 
-    public ProjectorStore<A> getProjectorStore() {
+    public ProjectorStore getProjectorStore() {
         return projectorStore;
     }
 
-    public AggregateStore<A> getAggregateStore() {
+    public AggregateStore getAggregateStore() {
         return aggregateStore;
     }
 

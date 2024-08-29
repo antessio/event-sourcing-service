@@ -7,7 +7,10 @@
     <version>1.0-SNAPSHOT</version>
     <name>event-sourcing</name>
     <url>http://maven.apache.org</url>
-
+    <properties>
+        <project.version>${project.version}</project.version>
+        <jackson-databind.version>2.17.2</jackson-databind.version>
+    </properties>
     <modules>
         <module>core</module>
         <module>aggregate-api</module>
@@ -19,6 +22,21 @@
         <module>json-conversion-api</module>
         <module>event-postgres</module>
     </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>

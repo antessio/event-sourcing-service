@@ -2,42 +2,52 @@ package antessio.eventsourcing.inmemory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import eventsourcing.Event;
 import eventsourcing.EventStore;
-import testutils.wallet.Wallet;
+import eventsourcing.aggregate.Aggregate;
 
 
-public class InMemoryEventStore implements EventStore<Wallet> {
+public class InMemoryEventStore implements EventStore {
 
-    private final List<Event<Wallet>> aggregateEvents = new ArrayList<>();
-    private final List<Event<Wallet>> unprocessedEvents = new ArrayList<>();
+    private final List<Event<? extends Aggregate>> aggregateEvents = new ArrayList<>();
+    private final List<Event<? extends Aggregate>> unprocessedEvents = new ArrayList<>();
+
 
     @Override
-    public void put(List<Event<Wallet>> events) {
+    public <A extends Aggregate> void put(List<Event<A>> events) {
         unprocessedEvents.addAll(events);
     }
 
     @Override
-    public List<Event<Wallet>> getAllEvents() {
-        return List.copyOf(aggregateEvents);
+    public <A extends Aggregate> List<Event<A>> getAllEvents() {
+        return Stream.concat(
+                             unprocessedEvents.stream(),
+                             aggregateEvents.stream())
+                     .map(e -> (Event<A>) e)
+                     .toList();
     }
 
     @Override
-    public List<Event<Wallet>> getAggregateEvents(Class<? extends Wallet> aggregateClass) {
+    public <A extends Aggregate> List<Event<A>> getAggregateEvents(Class<? extends A> aggregateClass) {
         return aggregateEvents
                 .stream()
                 .filter(e -> e.getAggregateClass().equals(aggregateClass))
+                .map(e -> (Event<A>) e)
                 .toList();
     }
 
     @Override
-    public List<Event<Wallet>> getUnprocessedEvents() {
-        return unprocessedEvents;
+    public <A extends Aggregate> List<Event<A>> getUnprocessedEvents() {
+        return unprocessedEvents
+                .stream()
+                .map(e -> (Event<A>) e)
+                .toList();
     }
 
     @Override
-    public void markAsProcessed(List<Event<Wallet>> processedEvents) {
+    public <A extends Aggregate> void markAsProcessed(List<Event<A>> processedEvents) {
         unprocessedEvents.removeAll(processedEvents);
         aggregateEvents.addAll(processedEvents);
     }

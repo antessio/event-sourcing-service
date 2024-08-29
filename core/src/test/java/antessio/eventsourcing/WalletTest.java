@@ -74,7 +74,7 @@ class WalletTest {
 
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("provideImplementations")
-    void shouldCreateWallet(String description, EventSourcingService<Wallet> eventStore) {
+    void shouldCreateWallet(String description, EventSourcingService eventStore) {
         UUID ownerId = UUID.randomUUID();
 
         Wallet walletCreated = eventStore.publish(new CreateWalletCommand(ownerId));
@@ -89,7 +89,7 @@ class WalletTest {
 
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("provideImplementations")
-    void shouldTopUpWallet(String description, EventSourcingService<Wallet> eventStore) {
+    void shouldTopUpWallet(String description, EventSourcingService eventStore) {
         Wallet wallet = new Wallet(UUID.randomUUID(), BigDecimal.TEN, UUID.randomUUID());
         eventStore.getAggregateStore().put(wallet);
 
@@ -111,10 +111,10 @@ class WalletTest {
         );
     }
 
-    private static EventSourcingService<Wallet> allInMemory() {
+    private static EventSourcingService allInMemory() {
 
 
-        EventSourcingService<Wallet> eventStore = new EventSourcingService<>(
+        EventSourcingService eventStore = new EventSourcingService(
                 new InMemoryProjectorStore(),
                 new InMemoryAggregateStore(),
                 new InMemoryEventStore());
@@ -122,21 +122,21 @@ class WalletTest {
         return eventStore;
     }
 
-    private static EventSourcingService<Wallet> allInMemoryWithAggregateStoreOnPg() {
+    private static EventSourcingService allInMemoryWithAggregateStoreOnPg() {
 
 
-        EventSourcingService<Wallet> eventStore = new EventSourcingService<>(
+        EventSourcingService eventStore = new EventSourcingService(
                 new InMemoryProjectorStore(),
-                new PostgresAggregateStore<>(new JacksonJsonConverter(), getAggregateStoreDatabaseConfiguration()),
+                new PostgresAggregateStore(new JacksonJsonConverter(), getAggregateStoreDatabaseConfiguration()),
                 new InMemoryEventStore());
         WalletProjections.getProjectors().forEach(eventStore::registerProjector);
         return eventStore;
     }
 
-    private static EventSourcingService<Wallet> allInMemoryWithEventStoreOnPg() {
+    private static EventSourcingService allInMemoryWithEventStoreOnPg() {
 
 
-        EventSourcingService<Wallet> eventStore = new EventSourcingService<>(
+        EventSourcingService eventStore = new EventSourcingService(
                 new InMemoryProjectorStore(),
                 new InMemoryAggregateStore(),
                 new PostgresEventStore<>(new JacksonJsonConverter(), getEventStoreDatabaseConfiguration()));
@@ -147,19 +147,19 @@ class WalletTest {
 
 
 
-    private static EventSourcingService<Wallet> allInMemoryWithAnnotationBasedProjectorStore() {
+    private static EventSourcingService allInMemoryWithAnnotationBasedProjectorStore() {
 
-        return new EventSourcingService<>(
-                new AnnotationBasedProjectorStore<>(List.of("testutils.wallet.projector")),
+        return new EventSourcingService(
+                new AnnotationBasedProjectorStore(List.of("testutils.wallet.projector")),
                 new InMemoryAggregateStore(),
                 new InMemoryEventStore());
     }
 
-    private static EventSourcingService<Wallet> annotationBasedProjectorAndAllOnPg() {
+    private static EventSourcingService annotationBasedProjectorAndAllOnPg() {
 
-        return new EventSourcingService<>(
-                new AnnotationBasedProjectorStore<>(List.of("testutils.wallet.projector")),
-                new PostgresAggregateStore<>(new JacksonJsonConverter(), getAggregateStoreDatabaseConfiguration()),
+        return new EventSourcingService(
+                new AnnotationBasedProjectorStore(List.of("testutils.wallet.projector")),
+                new PostgresAggregateStore(new JacksonJsonConverter(), getAggregateStoreDatabaseConfiguration()),
                 new PostgresEventStore<>(new JacksonJsonConverter(), getEventStoreDatabaseConfiguration()));
     }
 

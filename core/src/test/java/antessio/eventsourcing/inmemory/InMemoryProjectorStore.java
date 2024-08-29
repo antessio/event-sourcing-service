@@ -6,20 +6,20 @@ import java.util.Map;
 import eventsourcing.Event;
 import eventsourcing.Projector;
 import eventsourcing.ProjectorStore;
-import testutils.wallet.Wallet;
+import eventsourcing.aggregate.Aggregate;
 
 
-public class InMemoryProjectorStore implements ProjectorStore<Wallet> {
+public class InMemoryProjectorStore implements ProjectorStore {
 
-    private final Map<Class<? extends Event<Wallet>>, Projector<Wallet, Event<Wallet>>> projectorsMap = new HashMap<>();
+    private final Map<Class<? extends Event>, Projector> projectorsMap = new HashMap<>();
 
     @Override
-    public boolean hasProjector(Class<? extends Event<Wallet>> eventType) {
+    public <A extends Aggregate> boolean hasProjector(Class<? extends Event<A>> eventType) {
         return projectorsMap.containsKey(eventType);
     }
 
     @Override
-    public void addProjector(Projector<Wallet, Event<Wallet>> projector) {
+    public <A extends Aggregate> void addProjector(Projector<A, Event<A>> projector) {
         if (projectorsMap.containsKey(projector.getSubscribedEvent())) {
             throw new IllegalArgumentException("this event has already a projector");
         }
@@ -27,7 +27,7 @@ public class InMemoryProjectorStore implements ProjectorStore<Wallet> {
     }
 
     @Override
-    public Projector<Wallet, Event<Wallet>> getMatchingProjector(Class<? extends Event<Wallet>> eventType) {
+    public <A extends Aggregate> Projector<A, Event<A>> getMatchingProjector(Class<? extends Event<A>> eventType) {
         return projectorsMap.get(eventType);
     }
 

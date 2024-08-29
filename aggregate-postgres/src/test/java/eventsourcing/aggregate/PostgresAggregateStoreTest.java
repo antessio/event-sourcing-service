@@ -59,7 +59,7 @@ class PostgresAggregateStoreTest {
     void store() {
         // given
         Wallet wallet = new Wallet(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN);
-        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
+        PostgresAggregateStore postgresAggregateStore = new PostgresAggregateStore(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
         postgresAggregateStore.put(wallet);
 
         // when
@@ -76,7 +76,7 @@ class PostgresAggregateStoreTest {
     void getNotExisting() {
         // given
         Wallet wallet = new Wallet(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN);
-        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
+        PostgresAggregateStore postgresAggregateStore = new PostgresAggregateStore(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
 
         // when
         Optional<Wallet> maybeAggregate = postgresAggregateStore.get(wallet.getId(), Wallet.class);
@@ -90,7 +90,7 @@ class PostgresAggregateStoreTest {
     void putExisting() {
         // given
         Wallet wallet = new Wallet(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN);
-        PostgresAggregateStore<Wallet> postgresAggregateStore = new PostgresAggregateStore<>(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
+        PostgresAggregateStore postgresAggregateStore = new PostgresAggregateStore(new JacksonJsonConverter(), aggregateStoreDatabaseConfiguration);
         postgresAggregateStore.put(wallet);
 
         Wallet sameWallet = new Wallet(wallet.id(), wallet.ownerId(), BigDecimal.ONE);
